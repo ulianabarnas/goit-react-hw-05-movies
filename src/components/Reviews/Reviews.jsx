@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getMovieByQuery, getReviewsById } from "services/api";
+import { getReviewsById } from "services/api";
 
 export default function Reviews() {
     const [reviews, setReviews] = useState([]);
     const { movieId } = useParams();
 
     useEffect(() => {
-        getMovieByQuery().then(setReviews)
-        // getReviewsById(Number(movieId)).then(data => {
-        //     setReviews(data.results)
+
+        getReviewsById(Number(movieId)).then(data => {
+            setReviews(data.results)
             
-        // })
+        })
     }, [movieId]);
 
     console.log(reviews);
