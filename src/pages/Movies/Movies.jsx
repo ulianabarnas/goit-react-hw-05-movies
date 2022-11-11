@@ -1,46 +1,31 @@
-import PropTypes from 'prop-types';
-import { ErrorMessage, Formik } from "formik";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { Button, ButtonLabel, Container, Input, SearchForm } from "./Movies.styles";
+import MovieList from "components/MovieList/MovieList";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { getMovieByQuery } from "services/api";
+import SearchBox from "shared/SearchBox/SearchBox";
 
-export default function Movies({onSubmit}) {
-    const handleSubmit = (values, { resetForm }) => {
-        if (values.query.trim() === '') {
-            return toast.info('Fill this field.')
-        }
-        
-        onSubmit(values.query.trim());
-        resetForm();
-    };
 
+export default function Movies() {
+    const [searchedMovies, setSearchedMovies] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const query = searchParams.get('query') ?? "";
+
+    // console.log(query);
+
+    useEffect(() => {
+        getMovieByQuery(query).then(data => setSearchedMovies(data.results));
+    }, [query])
+
+    const handleSearchBoxSubmit = value => {
+        setSearchParams({ query: value.toLowerCase() });
+    }
+
+    console.log(searchedMovies);
     return (
-        <Container>
-            <Formik
-                initialValues={{ query: "" }}
-                onSubmit={handleSubmit}
-            >
-                <SearchForm>
-                    <Button type="submit">
-                        <ButtonLabel>
-                            Search
-                        </ButtonLabel>
-                    </Button>
-
-                    <Input
-                        name="query"
-                        type="text"
-                        autoComplete="off"
-                        autoFocus
-                        placeholder="Search images and photos"
-                    />
-                    <ErrorMessage name="query" />
-                </SearchForm>
-            </Formik>
-        </Container>
+        <main>
+            <SearchBox onSubmit={handleSearchBoxSubmit} />
+            {searchedMovies.length > 0 && <MovieList movies={searchedMovies} />}
+        </main>
     );
-};
-
-Movies.propTypes = {
-    onSubmit: PropTypes.func.isRequired,
 };

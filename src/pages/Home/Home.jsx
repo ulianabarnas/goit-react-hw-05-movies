@@ -20,7 +20,6 @@ export default function Home() {
             })
             .catch(error => {
                 setError(error);
-                console.log(error);
                 setMovies([]);
             })
             .finally(() => setLoading(false));
