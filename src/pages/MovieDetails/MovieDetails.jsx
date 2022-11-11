@@ -1,5 +1,5 @@
 import { Suspense, useState } from "react";
-import { Link, Outlet, useLocation, useParams } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import { getMovieDetailsById } from "services/api";
 import Loader from "shared/Loader/Loader";
 import { Info, NavItem, Paragraph, Rating, Title, Wrapper } from "./MovieDetails.styled";
@@ -10,7 +10,7 @@ export default function MovieDetails() {
     const [error, setError] = useState(null);
     
     const { movieId } = useParams();
-    const location = useLocation();
+    // const location = useLocation();
     // const backLinkHref = location.state?.from ?? "/";
 
     useState(() => {
