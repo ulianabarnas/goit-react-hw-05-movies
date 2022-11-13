@@ -20,7 +20,6 @@ export default function MovieDetails() {
                 setMovie(data);
             })
             .catch(error => {
-                console.dir(error);
                 setError(error);
                 setMovie(null);
             })
