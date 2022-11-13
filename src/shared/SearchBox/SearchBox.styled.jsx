@@ -14,6 +14,7 @@ export const Container = styled.div`
     padding-left: 24px;
     padding-top: 12px;
     padding-bottom: 12px;
+    margin-bottom: 12px;
     color: #fff;
     background-color: #ff4500;
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),

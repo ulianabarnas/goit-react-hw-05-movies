@@ -1,69 +1,65 @@
-import { Suspense, useState } from "react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Suspense, useEffect, useState } from "react";
+import { Outlet, useLocation, useParams } from "react-router-dom";
 import { getMovieDetailsById } from "services/api";
+import BackLink from "shared/BackLink/BackLink";
 import Loader from "shared/Loader/Loader";
-import { Info, NavItem, Paragraph, Rating, Title, Wrapper } from "./MovieDetails.styled";
+import { AddInfo, Info, Item, List, NavItem, Paragraph, Rating, Title, Wrapper } from "./MovieDetails.styled";
+import defaultImage from '../../images/default-poster.jpg';
 
 export default function MovieDetails() {
     const [movie, setMovie] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     
     const { movieId } = useParams();
-    // const location = useLocation();
-    // const backLinkHref = location.state?.from ?? "/";
+    const location = useLocation();
 
-    useState(() => {
-        setLoading(true);
-
-        getMovieDetailsById(Number(movieId))
+    useEffect(() => {
+        getMovieDetailsById(movieId)
             .then(data => {
                 setError(null);
                 setMovie(data);
             })
             .catch(error => {
+                console.dir(error);
                 setError(error);
                 setMovie(null);
             })
-            .finally(() => setLoading(false));
-
-    }, []);
+    }, [movieId]);
 
     if (!movie) {
-        return null;
-    }    
-    // console.log(movie);
-    
+        return;
+    };
+
     const { title, release_date, overview, poster_path, genres, vote_average } = movie;
     const genreList = genres.map(({ name }) => name).join(", ");
-    console.log(genreList);
-    // const backLinkHref = location.state?.from ?? "/customers";
+    const backLinkHref = location.state?.from ?? "/movies";
+    const imgSrc = poster_path ? `https://image.tmdb.org/t/p/w300${poster_path}` : defaultImage;
 
     return (
         <main>
-            <NavItem to="/">Go back</NavItem>
-            {loading && <Loader />}
-            {error && <p>Movie load fail</p>}
+            {error && <p>Movie loading fail</p>}
+
+            <BackLink to={backLinkHref}>Go back</BackLink>
             <Wrapper>
-                <img src={`https://image.tmdb.org/t/p/w300${poster_path}`} alt={title} />
-            
+                <img src={imgSrc} alt={title} width="300"/>
                 <Info>
                     <Title>{title} ({release_date.slice(0, 4)})</Title>
                     <Paragraph><b>Vote average:</b> <Rating>{vote_average}</Rating></Paragraph>
                     <Paragraph><b>Overview:</b> {overview}</Paragraph>
                     <Paragraph><b>Genres:</b> {genreList}</Paragraph>
+                    <AddInfo>Additional information</AddInfo>
+                    <List>
+                        <Item>
+                            <NavItem to="cast" state={{ from: backLinkHref }}>Cast</NavItem>
+                        </Item>
+                        <Item>
+                            <NavItem to="reviews" state={{ from: backLinkHref }}>Reviews</NavItem>
+                        </Item>                
+                    </List>
                 </Info>
             </Wrapper>
-            <h3>Additional information</h3>
-            <ul>
-                <li>
-                    <Link to="cast">Cast</Link>
-                </li>
-                <li>
-                    <Link to="reviews">Reviews</Link>
-                </li>                
-            </ul>
-            <Suspense fallback={null}>
+
+            <Suspense fallback={<Loader/>}>
                 <Outlet />
             </Suspense>
         </main>

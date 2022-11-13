@@ -5,13 +5,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Button, ButtonLabel, Container, Input, SearchForm } from "./SearchBox.styled";
 
 export default function SearchBox({onSubmit}) {
-    const handleSubmit = (values, { resetForm }) => {
+    const handleSubmit = (values) => {
         if (values.query.trim() === '') {
             return toast.info('Fill this field.')
-        }
+        };
         
         onSubmit(values.query.trim());
-        resetForm();
     };
 
     return (
@@ -32,7 +31,7 @@ export default function SearchBox({onSubmit}) {
                         type="text"
                         autoComplete="off"
                         autoFocus
-                        placeholder="Search images and photos"
+                        placeholder="Search movie"
                     />
                     <ErrorMessage name="query" />
                 </SearchForm>
